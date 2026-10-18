@@ -68,3 +68,11 @@ Just open with link in any browser or download apk. Works offline, saves progres
 ---
 
 Made with canvas, caffeine, and an irresponsible number of prototypes. 🐒
+
+
+[![Play](https://img.shields.io/badge/play-Signal%20Drift-8b5cf6?style=for-the-badge)](https://zidan-7-alive.github.io/signal-drift/)
+![Version](https://img.shields.io/badge/version-v0.10.6-8b5cf6)
+![Build](https://github.com/zidan-7-alive/signal-drift/actions/workflows/main.yml/badge.svg)
+![Pages](https://github.com/zidan-7-alive/signal-drift/actions/workflows/pages-build-deployment.yml/badge.svg)
+![Tech](https://img.shields.io/badge/built%20with-canvas%20%2B%20vanilla%20JS-101014)
+![Size](https://img.shields.io/github/repo-size/zidan-7-alive/signal-drift)
