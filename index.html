@@ -55,7 +55,6 @@ p{font-size:14px;color:var(--sub);max-width:400px;line-height:1.5}
 .adtitle{font-size:14px;font-weight:600;color:var(--ink)}
 .adsub{font-size:12px;color:var(--sub)}
 .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;z-index:50;pointer-events:none}
-.bannerad{height:52px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;color:var(--sub);flex:none;padding-bottom:env(safe-area-inset-bottom)}
 @media (prefers-reduced-motion:reduce){.adsword{animation:none}}
 </style>
 </head>
@@ -96,7 +95,7 @@ p{font-size:14px;color:var(--sub);max-width:400px;line-height:1.5}
     <p id="clearUnlock" style="color:var(--good);font-weight:600"></p>
     <button class="btn" id="clearBtn">Continue</button>
     <button class="btn2" id="reLvlBtn">Restart level</button>
-    <button class="btn2" id="dgBtn">Watch ad · 2× level gems</button>
+    <button class="btn2" id="dgBtn">Claim 2× level gems</button>
     <button class="btn2" id="shareBtn" hidden>Share score</button>
   </div>
   <div class="veil" id="overVeil" hidden>
@@ -143,15 +142,6 @@ p{font-size:14px;color:var(--sub);max-width:400px;line-height:1.5}
     <button class="btn" id="perk2"></button>
     <button class="btn" id="perk3"></button>
   </div>
-  <div class="veil" id="adVeil" hidden>
-    <div class="adbox">
-      <span class="adtag">Ad · demo placement</span>
-      <div class="adart"><span class="adsword">⚔️</span></div>
-      <div class="adtitle">Shadow blade saga</div>
-      <div class="adsub" id="adSub">The realm needs a hero. Swing now.</div>
-      <button class="btn" id="adBtn" disabled>Continue in 5</button>
-    </div>
-  </div>
   <div class="veil" id="offVeil" hidden>
     <h1>You're offline</h1>
     <p>Signal drift needs an internet connection to play. Reconnect to continue.</p>
@@ -163,7 +153,7 @@ p{font-size:14px;color:var(--sub);max-width:400px;line-height:1.5}
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<div class="bannerad"><span class="adtag">Ad · demo banner</span><span>Your ad could live here — 320×50</span></div>
+
 <script>
 window.addEventListener('error',function(e){var b=document.getElementById('errbox');if(!b){b=document.createElement('div');b.id='errbox';b.style.cssText='position:fixed;top:64px;left:8px;right:8px;z-index:999;background:#3a0d12;color:#ffd7d7;border:1px solid #ff5c64;border-radius:10px;padding:10px 12px;font:12px/1.5 monospace;white-space:pre-wrap;';document.body.appendChild(b)}b.textContent='Error: '+(e.message||e.type)+(e.lineno?' (line '+e.lineno+')':'')+'\n'+((e.error&&e.error.stack)?e.error.stack.split('\n').slice(0,3).join('\n'):'');});
 </script>
@@ -378,8 +368,8 @@ window.addEventListener('error',function(e){var b=document.getElementById('errbo
 var $=function(id){return document.getElementById(id)};
 var cv=$('cv'),ctx=cv.getContext('2d'),joyEl=$('joy'),knob=$('knob');
 var elScore=$('score'),elLv=$('lv'),elBest=$('best'),elCombo=$('combo'),barFill=$('barFill');
-var elStart=$('startVeil'),elClear=$('clearVeil'),elOver=$('overVeil'),elWin=$('winVeil'),elLvl=$('lvlVeil'),elAd=$('adVeil'),elOff=$('offVeil'),elPause=$('pauseVeil'),elPerk=$('perkVeil');
-var elFinal=$('final'),elFinalBest=$('finalBest'),adBtn=$('adBtn'),adSub=$('adSub');
+var elStart=$('startVeil'),elClear=$('clearVeil'),elOver=$('overVeil'),elWin=$('winVeil'),elLvl=$('lvlVeil'),elOff=$('offVeil'),elPause=$('pauseVeil'),elPerk=$('perkVeil');
+var elFinal=$('final'),elFinalBest=$('finalBest');
 var GRID,INK,GOOD,CHARGE,HEARTC,VOIDC,DANGER,P,DARKEYE;
 function applyTheme(){var dark=true;
 GRID=dark?'#3a3a3a':'#d8d8d8';INK=dark?'#f2f2f2':'#141414';DARKEYE=dark?'#161616':'#3a3a3a';
@@ -446,8 +436,6 @@ var keys={};
 var KEYLIST=['arrowleft','arrowright','arrowup','arrowdown','a','d','w','s'];
 addEventListener('keydown',function(e){var k=e.key.toLowerCase();if(KEYLIST.indexOf(k)>=0&&state==='playing')e.preventDefault();keys[k]=true;if(e.key==='Enter'&&state==='ready')start(1)});
 addEventListener('keyup',function(e){keys[e.key.toLowerCase()]=false});
-function refreshNet(){var on=navigator.onLine;if(state==='over'){$('reviveBtn').disabled=!on;$('reviveBtn').textContent=on?'Watch ad to revive (+1 life)':'Connect to watch ad'}}
-addEventListener('offline',refreshNet);addEventListener('online',refreshNet);
 addEventListener('blur',function(){keys={};joyEnd();if(state==='playing')pauseGame()});
 document.addEventListener('visibilitychange',function(){if(document.hidden&&state==='playing')pauseGame()});
 function joyStart(x,y){joy.active=true;joy.ox=x;joy.oy=y;joy.vx=0;joy.vy=0;joyEl.hidden=false;joyEl.style.left=Math.max(4,Math.min(W-116,x-56))+'px';joyEl.style.top=Math.max(4,Math.min(H-116,y-56))+'px';knob.style.transform='translate(-50%,-50%)'}
@@ -468,11 +456,7 @@ function pauseGame(){if(state!=='playing')return;state='paused';elPause.hidden=f
 $('pauseBtn').addEventListener('click',function(){if(state==='playing')pauseGame()});
 $('resumeBtn').addEventListener('click',function(){elPause.hidden=true;state='playing';last=performance.now()});
 $('menuBtn').addEventListener('click',function(){elPause.hidden=true;state='ready';joyEnd();refreshMenu();elStart.hidden=false});
-function online(){return navigator.onLine}
-function checkOnline(){if(!online()){elOff.hidden=false;return false}elOff.hidden=true;return true}
 
-function watchReward(t,cb){if(navigator.onLine)showAd(t,cb)}
-function showAd(rewardText,cb){if(!navigator.onLine){if(!rewardText)cb();return}state='ad';elAd.hidden=false;adSub.textContent=rewardText?('Reward: '+rewardText+'. Hang tight.'):'The realm needs a hero. Swing now.';var n=5;adBtn.disabled=true;adBtn.textContent='Continue in '+n;var iv=setInterval(function(){n--;if(n<=0){clearInterval(iv);adBtn.disabled=false;adBtn.textContent=rewardText?('Claim '+rewardText):'Continue'}else adBtn.textContent='Continue in '+n},1000);adBtn.onclick=function(){if(adBtn.disabled)return;clearInterval(iv);elAd.hidden=true;beep(660,0.1,'triangle',0.05);cb()}}
 function spawnObs(){var conf=getConf(eff),t=Math.floor(rnd()*conf.types),s=14+rnd()*12;
 var e={type:t,x:20+rnd()*(W-40),y:-s,r:s*0.45,s:s,rot:rnd()*6.28,vr:(rnd()-0.5)*(t===2?9:3),vy:enemySpeed(eff),ph:rnd()*6.28,hp:t===5?2:1};
 e.baseX=Math.max(16,Math.min(W-16,e.x));e.x=e.baseX;obs.push(e)}
@@ -501,7 +485,7 @@ $('againBtn').addEventListener('click',function(){if(daily)startDaily();else sta
 $('winBtn').addEventListener('click',function(){start(1)});
 function startEndless(){reset(1);endless=true;level=100;endlessT=0;obs=[];gems=[];picks=[];boss=null;bossT=0;elLv.textContent='Lv ∞';elBest.textContent='Endless best '+(prog.endless||0);state='playing';elWin.hidden=true;startMusic();bannerT=1.6;last=performance.now()}
 $('endlessBtn').addEventListener('click',startEndless);
-$('reviveBtn').addEventListener('click',function(){watchReward('+1 life',function(){lives=1;invuln=2.5;obs=[];state='playing';elOver.hidden=true;last=performance.now()})});
+$('reviveBtn').addEventListener('click',function(){lives=1;invuln=2.5;obs=[];state='playing';elOver.hidden=true;last=performance.now()});
 function buildLevels(){var g=$('lvlGrid');g.innerHTML='';var nextB=null;for(var li=1;li<=100;li++){var b=document.createElement('button');b.className='lvlbtn';var st=prog.stars[li]||0;b.innerHTML=li+'<small>'+(st?'★★★'.slice(0,st):'')+'</small>';if(li>prog.cleared+1){b.disabled=true;b.innerHTML=li+'<small>🔒</small>'}else if(li===prog.cleared+1&&li<=100){b.style.borderColor='var(--good)';b.style.boxShadow='0 0 0 2px var(--good)';nextB=b}(function(n){b.addEventListener('click',function(){start(n)})})(li);g.appendChild(b)}
 if(nextB)nextB.scrollIntoView({block:'center'});$('highReached').textContent=prog.cleared;$('nextUnlock').textContent=Math.min(100,prog.cleared+1)}
 buildLevels();
@@ -524,7 +508,7 @@ $('buyMag').addEventListener('click',function(){buy('magnet')});
 $('shopBtn').addEventListener('click',function(){renderShop();$('shopVeil').hidden=false});
 $('dailyBtn').addEventListener('click',startDaily);
 function renderSkins(){if(!prog.skins)prog.skins={owned:{shadow:true},active:'shadow'};var sr=$('skinRow');if(!sr)return;sr.innerHTML='';
-for(var i=0;i<SKINS.length;i++){(function(sk){var b=document.createElement('button');b.className='tb';var own=prog.skins.owned[sk.id];var act=prog.skins.active===sk.id;b.textContent=sk.name+(act?' ✓':own?'':' · '+(sk.cost<0?'ad':'◆'+sk.cost));b.disabled=act;b.onclick=function(){if(own){prog.skins.active=sk.id;saveProg();renderSkins()}else if(sk.cost<0){watchReward(sk.name+' skin',function(){prog.skins.owned[sk.id]=true;prog.skins.active=sk.id;saveProg();renderSkins()})}else if((prog.gems||0)>=sk.cost){prog.gems-=sk.cost;prog.skins.owned[sk.id]=true;prog.skins.active=sk.id;saveProg();refreshGemHUD();renderShop()}else toast('Not enough gems')};
+for(var i=0;i<SKINS.length;i++){(function(sk){var b=document.createElement('button');b.className='tb';var own=prog.skins.owned[sk.id];var act=prog.skins.active===sk.id;b.textContent=sk.name+(act?' ✓':own?'':' · '+(sk.cost<0?'free':'◆'+sk.cost));b.disabled=act;b.onclick=function(){if(own){prog.skins.active=sk.id;saveProg();renderSkins()}else if(sk.cost<0){prog.skins.owned[sk.id]=true;prog.skins.active=sk.id;saveProg();renderSkins()}else if((prog.gems||0)>=sk.cost){prog.gems-=sk.cost;prog.skins.owned[sk.id]=true;prog.skins.active=sk.id;saveProg();refreshGemHUD();renderShop()}else toast('Not enough gems')};
 sr.appendChild(b)})(SKINS[i])}}
 $('shopBack').addEventListener('click',function(){$('shopVeil').hidden=true});
 refreshMenu();refreshGemHUD();
@@ -559,7 +543,7 @@ $('clearStars').textContent='★★★'.slice(0,st)+'☆☆☆'.slice(0,3-st);
 $('csTime').textContent=Math.round(levelTime)+'s';$('csKills').textContent=kills;$('csGems').textContent=gemsGot;$('csHits').textContent=hits;
 $('objList').innerHTML=rows;
 $('clearUnlock').textContent=isNew?('New daily best: '+fsc):('Daily best: '+prev);
-$('dgBtn').disabled=!navigator.onLine||!firstClear;$('dgBtn').textContent=!firstClear?'Already cleared today':(navigator.onLine?'Watch ad · 2× level gems':'Connect to watch ad');
+$('dgBtn').disabled=!firstClear;$('dgBtn').textContent=firstClear?'Claim 2× level gems':'Already cleared today';
 $('shareBtn').hidden=false;
 elClear.hidden=false;beep(660,0.1,'triangle',0.05);setTimeout(function(){beep(880,0.12,'triangle',0.05)},120)}
 function levelClear(){
@@ -568,7 +552,7 @@ if(level>prog.cleared){prog.cleared=level;saveProg()}
 var fsc=Math.floor(score);if(fsc>best){best=fsc;try{localStorage.setItem('sd100-best',''+best)}catch(_){}}
 prog.gems=(prog.gems||0)+Math.max(0,gemsGot-gemsBanked);gemsBanked=gemsGot;saveProg();refreshGemHUD();refreshMenu();
 $('clearUnlock').textContent=level<100?('Level '+(level+1)+' unlocked'):'All levels cleared';
-$('dgBtn').disabled=!navigator.onLine;$('dgBtn').textContent=navigator.onLine?'Watch ad · 2× level gems':'Connect to watch ad';
+$('dgBtn').disabled=false;$('dgBtn').textContent='Claim 2× level gems';
 $('shareBtn').hidden=true;
 var met=0,rows='';
 for(var oi=0;oi<curObj.length;oi++){var o=curObj[oi];
@@ -596,11 +580,10 @@ $('clearBtn').addEventListener('click',function(){
 elClear.hidden=true;
 if(daily){state='ready';refreshMenu();elStart.hidden=false;return}
 if(level%5===0&&level<100){showPerks()}
-else if(level%3===0&&navigator.onLine){showAd(null,nextLv)}
 else nextLv()
 });
 $('shareBtn').addEventListener('click',function(){var txt='I scored '+Math.floor(score)+" on today's Signal drift daily challenge!";if(navigator.share)navigator.share({title:'Signal drift',text:txt}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(txt).then(function(){toast('Copied')}).catch(function(){})});
-$('dgBtn').addEventListener('click',function(){var b=this;watchReward('2× gems',function(){var want=2*gemsGot;prog.gems+=(want>gemsBanked?want-gemsBanked:0);gemsBanked=Math.max(gemsBanked,want);saveProg();refreshGemHUD();b.disabled=true;b.textContent='Gems doubled ◆'})});
+$('dgBtn').addEventListener('click',function(){var b=this;var want=2*gemsGot;prog.gems+=(want>gemsBanked?want-gemsBanked:0);gemsBanked=Math.max(gemsBanked,want);saveProg();refreshGemHUD();b.disabled=true;b.textContent='Gems doubled ◆'});
 function gameOver(){state='over';var s=Math.floor(score);if(s>best){best=s;try{localStorage.setItem('sd100-best',''+best)}catch(_){}}
 if(endless){prog.endless=Math.max(prog.endless||0,s);saveProg()}
 var gb=Math.floor(gemsGot/2);
@@ -608,7 +591,7 @@ if(gb>gemsBanked){prog.gems=(prog.gems||0)+(gb-gemsBanked);gemsBanked=gb}
 saveProg();refreshGemHUD();
 elFinal.textContent=s;
 elFinalBest.textContent=endless?('Endless best '+(prog.endless||0)+' · This run '+s):('Best '+best+' · Reached level '+level);
-$('reviveBtn').disabled=!navigator.onLine;$('reviveBtn').textContent=navigator.onLine?'Watch ad to revive (+1 life)':'Connect to watch ad';
+$('reviveBtn').disabled=false;$('reviveBtn').textContent='Revive (+1 life)';
 $('againBtn').textContent='Restart level '+level;
 elOver.hidden=false;joyEnd();
 beep(200,0.3,'sawtooth',0.06);setTimeout(function(){beep(120,0.4,'sawtooth',0.06)},180)}
