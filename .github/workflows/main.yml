@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -20,17 +20,27 @@ jobs:
 
       - name: Accept SDK licenses and install components
         run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
           yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+          for i in 1 2 3; do
+            sdkmanager "platforms;android-34" "build-tools;34.0.0" && break
+            echo "sdkmanager attempt $i failed, retrying..."; sleep 5
+          done
 
       - name: Install Gradle
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip -O /tmp/gradle.zip
+          for i in 1 2 3; do
+            wget -q --tries=3 --timeout=60 https://services.gradle.org/distributions/gradle-8.9-bin.zip -O /tmp/gradle.zip && break
+            echo "gradle download attempt $i failed, retrying..."; sleep 5
+          done
           unzip -q /tmp/gradle.zip -d /tmp
           echo "/tmp/gradle-8.9/bin" >> "$GITHUB_PATH"
+          gradle --version
 
       - name: Generate Android wrapper project around the game
         run: |
+          set -e
           mkdir -p app/src/main/java/com/zidan/signaldrift app/src/main/assets
           cp index.html app/src/main/assets/index.html
 
@@ -123,7 +133,7 @@ jobs:
         run: |
           gradle wrapper --gradle-version 8.9
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - uses: actions/upload-artifact@v4
         with:
