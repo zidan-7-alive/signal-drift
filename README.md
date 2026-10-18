@@ -51,7 +51,7 @@ Getting hit resets it.
 
 ## Run it locally
 
-Just open `index.html` in any browser. Works offline, saves progress to
+Just open with link in any browser or download apk. Works offline, saves progress to
 `localStorage`.
 
 ## Deploy your own copy (GitHub Pages)
