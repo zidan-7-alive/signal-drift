@@ -54,13 +54,6 @@ Getting hit resets it.
 Just open with link in any browser or download apk. Works offline, saves progress to
 `localStorage`.
 
-## Deploy your own copy (GitHub Pages)
-
-1. Fork or create a repo named **`<username>.github.io`** (or any repo, served from `gh-pages` / root)
-2. Upload `index.html` to the repo root (**Add file → Upload files**)
-3. Settings → Pages → source: **Deploy from branch** → `main` / `/ (root)`
-4. Wait a minute, visit your URL. Done — every future update is just re-uploading `index.html`
-
 ## Tech notes
 
 - One self-contained HTML file — canvas rendering, Web Audio synth SFX + music loop, zero assets, zero network calls
@@ -69,7 +62,6 @@ Just open with link in any browser or download apk. Works offline, saves progres
 
 ## Roadmap ideas
 
-- Real ad network integration (slots are already designed in)
 - More enemy types & boss patterns past level 100
 - Leaderboards for the daily challenge
 
