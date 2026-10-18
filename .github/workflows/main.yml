@@ -71,8 +71,19 @@ jobs:
                   applicationId 'com.zidan.signaldrift'
                   minSdk 24
                   targetSdk 34
-                  versionCode 1
-                  versionName '1.0'
+                  versionCode 2
+                  versionName '0.10.6'
+              }
+              signingConfigs {
+                  release {
+                      storeFile file('../signal-drift.keystore')
+                      storePassword 'signaldrift'
+                      keyAlias 'signaldrift'
+                      keyPassword 'signaldrift'
+                  }
+              }
+              buildTypes {
+                  release { signingConfig signingConfigs.release }
               }
           }
           EOF
@@ -140,9 +151,9 @@ jobs:
         run: |
           gradle wrapper --gradle-version 8.9
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleRelease --stacktrace
 
       - uses: actions/upload-artifact@v4
         with:
-          name: signal-drift-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: signal-drift-apk-signed
+          path: app/build/outputs/apk/release/app-release.apk
