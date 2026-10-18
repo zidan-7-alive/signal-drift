@@ -49,7 +49,9 @@ jobs:
         run: |
           set -e
           mkdir -p app/src/main/java/com/zidan/signaldrift app/src/main/assets
+          mkdir -p app/src/main/res/mipmap-xxxhdpi
           cp index.html app/src/main/assets/index.html
+          cp icon-192.png app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
           cat > settings.gradle <<'EOF'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
@@ -92,7 +94,8 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <application android:label="Signal Drift"
-                  android:icon="@android:drawable/sym_def_app_icon"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
                   android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen"
                   android:hardwareAccelerated="true">
                   <activity android:name=".MainActivity" android:exported="true"
@@ -156,4 +159,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: signal-drift-apk-signed
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/signal-drift-v0.1-release.apk
